@@ -3,14 +3,24 @@ import { StringCodec } from 'nats'
 import * as nkeys from 'nkeys.js'
 
 export class AuthJWTPlugin {
-  isGlobalAuthenticationEnabled?: boolean
+  isGlobalAuthenticationEnabled: boolean
+  rolesPath: string
+
   bindPredicate: 'all' | 'any' = 'all'
 
   private kp: nkeys.KeyPair
 
-  constructor(public rolesPath: string, seed: string) {
+  constructor(config: {
+    isGlobalAuthenticationEnabled?: boolean
+    rolesPath: string
+    seed: string
+  }) {
+    this.rolesPath = config.rolesPath
+    this.isGlobalAuthenticationEnabled =
+      config.isGlobalAuthenticationEnabled ?? false
+
     const sc = nats.StringCodec()
-    this.kp = nkeys.fromSeed(sc.encode(seed))
+    this.kp = nkeys.fromSeed(sc.encode(config.seed))
   }
 
   /* eslint-disable @typescript-eslint/require-await */

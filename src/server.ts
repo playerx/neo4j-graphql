@@ -63,7 +63,11 @@ const neoSchema = new Neo4jGraphQL({
   driver,
   resolvers,
   plugins: {
-    auth: new AuthJWTPlugin('jok.roles', JOK_ACCOUNT_SEED),
+    auth: new AuthJWTPlugin({
+      isGlobalAuthenticationEnabled: true,
+      rolesPath: 'jok.roles',
+      seed: JOK_ACCOUNT_SEED,
+    }),
   },
 })
 
