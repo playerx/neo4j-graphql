@@ -23,11 +23,24 @@ const typeDefs = `
       name: String!
       sessions: [UserSession!]! @relationship(type: "HAS_SESSION", direction: OUT)
       email: String
-      address: String
+      walletAddress: String
+      tokens: Int!              @default(value: 0)
       status: UserStatus!
       otpSecret: String!        @private
 
+      """
+      *VIP Membership* information. User can read *only own data*. Admin can do all type of operation.
+      """
+      vip: VIPMembership        @relationship(type: "HAS_MEMBERSHIP", direction: OUT)
+
       updatedAt: DateTime       @timestamp(operations: [UPDATE])
+      createdAt: DateTime!      @timestamp(operations: [CREATE])
+    }
+
+    type VIPMembership {
+      id: ID! @id
+      user: User! @relationship(type: "HAS_MEMBERSHIP", direction: IN)
+      expiresAt: DateTime!
       createdAt: DateTime!      @timestamp(operations: [CREATE])
     }
 
@@ -54,7 +67,7 @@ const typeDefs = `
     type Game {
       id: ID! @id
       name: String!
-      
+
       updatedAt: DateTime       @timestamp(operations: [UPDATE])
       createdAt: DateTime!      @timestamp(operations: [CREATE])
     }
@@ -62,6 +75,7 @@ const typeDefs = `
     type GameRoom {
       id: ID! @id
       game: Game!               @relationship(type: "PLAYED_GAME", direction: OUT)
+      config: String            
       viewers: [User!]!         @relationship(type: "WATCHED_AT", direction: IN)
       players: [User!]!         @relationship(type: "PLAYED_AT", direction: IN)
 
@@ -70,6 +84,46 @@ const typeDefs = `
       updatedAt: DateTime       @timestamp(operations: [UPDATE])
       createdAt: DateTime!      @timestamp(operations: [CREATE])
     }
+
+
+    # Permissions -----------------------------------------------------
+    extend type User @auth(
+      rules: [
+        { roles: ["ADMIN"] },
+        {
+          where: { id: "$jwt.jok.userId" }
+          operations: [READ]
+        },
+      ]
+    )
+
+    extend type UserSession @auth(
+      rules: [
+        { roles: "ADMIN" }
+      ]
+    )
+
+    extend type VIPMembership @auth(
+      rules: [
+        { roles: ["ADMIN"] },
+        {
+          allow: { user: { id: "$jwt.jok.userId" } }
+          operations: [READ]
+        }
+      ]
+    )
+
+    extend type Game @auth(
+      rules: [
+        { roles: "ADMIN" }
+      ]
+    )
+
+    extend type GameRoom @auth(
+      rules: [
+        { roles: "ADMIN" }
+      ]
+    )
 `
 
 const resolvers = {}
