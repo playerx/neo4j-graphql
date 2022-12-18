@@ -4,7 +4,6 @@ import { Neo4jGraphQL } from '@neo4j/graphql'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import express from 'express'
-import { express as voyagerMiddleware } from 'graphql-voyager/middleware'
 import neo4j from 'neo4j-driver'
 import { AuthJWTPlugin } from './helpers/AuthJWTPlugin'
 
@@ -25,35 +24,51 @@ const typeDefs = `
       sessions: [UserSession!]! @relationship(type: "HAS_SESSION", direction: OUT)
       email: String
       address: String
-      otpSecret: String! @private
+      status: UserStatus!
+      otpSecret: String!        @private
 
-      updatedAt: DateTime @timestamp(operations: [UPDATE])
-      createdAt: DateTime! @timestamp(operations: [CREATE])
+      updatedAt: DateTime       @timestamp(operations: [UPDATE])
+      createdAt: DateTime!      @timestamp(operations: [CREATE])
     }
 
     type UserSession {
       id: ID! @id
-      user: User! @relationship(type: "HAS_SESSION", direction: IN)
+      user: User!               @relationship(type: "HAS_SESSION", direction: IN)
+      platform: Platform!
+      deviceName: String
+
+      createdAt: DateTime!      @timestamp(operations: [CREATE])
+    }
+
+    enum UserStatus {
+      GUEST
+      VERIFIED
+    }
+
+    enum Platform {
+      IOS
+      ANDROID
+      WEB
     }
 
     type Game {
       id: ID! @id
       name: String!
       
-      updatedAt: DateTime @timestamp(operations: [UPDATE])
-      createdAt: DateTime! @timestamp(operations: [CREATE])
+      updatedAt: DateTime       @timestamp(operations: [UPDATE])
+      createdAt: DateTime!      @timestamp(operations: [CREATE])
     }
 
     type GameRoom {
       id: ID! @id
-      game: Game! @relationship(type: "PLAYED_GAME", direction: OUT)
-      viewers: [User!]! @relationship(type: "WATCHED_AT", direction: IN)
-      players: [User!]! @relationship(type: "PLAYED_AT", direction: IN)
+      game: Game!               @relationship(type: "PLAYED_GAME", direction: OUT)
+      viewers: [User!]!         @relationship(type: "WATCHED_AT", direction: IN)
+      players: [User!]!         @relationship(type: "PLAYED_AT", direction: IN)
 
-      nextRoom: GameRoom @relationship(type: "NEXT_PLAYED_AT", direction: OUT)
+      nextRoom: GameRoom        @relationship(type: "NEXT_PLAYED_AT", direction: OUT)
 
-      updatedAt: DateTime @timestamp(operations: [UPDATE])
-      createdAt: DateTime! @timestamp(operations: [CREATE])
+      updatedAt: DateTime       @timestamp(operations: [UPDATE])
+      createdAt: DateTime!      @timestamp(operations: [CREATE])
     }
 `
 
@@ -85,6 +100,7 @@ neoSchema.getSchema().then(async schema => {
   await server.start()
 
   const app = express()
+
   app.use(
     '/',
     cors<cors.CorsRequest>(),
@@ -97,8 +113,6 @@ neoSchema.getSchema().then(async schema => {
   await new Promise<void>(resolve =>
     app.listen({ port: 4000 }, resolve)
   )
-
-  app.use('/voyager', voyagerMiddleware({ endpointUrl: '/graphql' }))
 
   console.log(`🚀 Server ready at http://localhost:4000`)
 })

@@ -19,7 +19,6 @@
     "dotenv": "^16.0.3",
     "esbuild": "^0.16.8",
     "esbuild-node-tsc": "^2.0.4",
-    "graphql-voyager": "^1.0.0-rc.31",
     "nodemon": "^2.0.20",
     "prettier": "^2.8.1",
     "ts-node": "^10.9.1"
