@@ -19,13 +19,16 @@ const {
 
 // The GraphQL schema
 const typeDefs = `
-    type User @auth(rules: [{ isAuthenticated: true }]) {
+    type User {
       id: ID! @id
       name: String!
       sessions: [UserSession!]! @relationship(type: "HAS_SESSION", direction: OUT)
       email: String
       address: String
       otpSecret: String! @private
+
+      updatedAt: DateTime @timestamp(operations: [UPDATE])
+      createdAt: DateTime! @timestamp(operations: [CREATE])
     }
 
     type UserSession {
@@ -36,6 +39,9 @@ const typeDefs = `
     type Game {
       id: ID! @id
       name: String!
+      
+      updatedAt: DateTime @timestamp(operations: [UPDATE])
+      createdAt: DateTime! @timestamp(operations: [CREATE])
     }
 
     type GameRoom {
@@ -44,10 +50,10 @@ const typeDefs = `
       viewers: [User!]! @relationship(type: "WATCHED_AT", direction: IN)
       players: [User!]! @relationship(type: "PLAYED_AT", direction: IN)
 
-      createdAt: DateTime! @timestamp(operations: [CREATE])
-      updatedAt: DateTime! @timestamp(operations: [UPDATE])
-
       nextRoom: GameRoom @relationship(type: "NEXT_PLAYED_AT", direction: OUT)
+
+      updatedAt: DateTime @timestamp(operations: [UPDATE])
+      createdAt: DateTime! @timestamp(operations: [CREATE])
     }
 `
 
@@ -79,20 +85,12 @@ neoSchema.getSchema().then(async schema => {
   await server.start()
 
   const app = express()
-
   app.use(
     '/',
     cors<cors.CorsRequest>(),
     bodyParser.json({ limit: '2mb' }),
     expressMiddleware(server, {
       context: async ({ req }) => ({ req }),
-    })
-  )
-
-  app.use(
-    '/voyager',
-    voyagerMiddleware({
-      endpointUrl: '/graphql',
     })
   )
 
