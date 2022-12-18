@@ -22,27 +22,16 @@ const typeDefs = `
     type User @auth(rules: [{ isAuthenticated: true }]) {
       id: ID! @id
       name: String!
-      identity: UserIdentity!
       sessions: [UserSession!]! @relationship(type: "HAS_SESSION", direction: OUT)
+      email: String
+      address: String
+      otpSecret: String! @private
     }
 
     type UserSession {
       id: ID! @id
       user: User! @relationship(type: "HAS_SESSION", direction: IN)
     }
-
-    type EmailIdentity {
-      email: String!
-      otpSecret: String! @private
-    }
-
-    type WalletIdentity {
-      type: String!
-      address: String!
-      otpSecret: String! @private
-    }
-
-    union UserIdentity = EmailIdentity | WalletIdentity
 
     type Game {
       id: ID! @id
