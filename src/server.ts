@@ -6,7 +6,7 @@ import cors from 'cors'
 import express from 'express'
 import { express as voyagerMiddleware } from 'graphql-voyager/middleware'
 import neo4j from 'neo4j-driver'
-import { AuthJWTPlugin } from './helper/AuthJWTPlugin'
+import { AuthJWTPlugin } from './helpers/AuthJWTPlugin'
 
 require('dotenv').config()
 
