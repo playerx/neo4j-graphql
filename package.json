@@ -1,7 +1,6 @@
 {
   "scripts": {
-    "start": "node dist/index.js",
-    "dev": "nodemon",
+    "start": "nodemon",
     "tsnode": "ts-node",
     "build": "etsc"
   },
