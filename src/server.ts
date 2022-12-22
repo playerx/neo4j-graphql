@@ -146,14 +146,14 @@ const neoSchema = new Neo4jGraphQL({
   },
 })
 
+const app = express()
+
 neoSchema.getSchema().then(async schema => {
   const server = new ApolloServer({
     schema,
   })
 
   await server.start()
-
-  const app = express()
 
   app.use(
     '/',
@@ -170,3 +170,5 @@ neoSchema.getSchema().then(async schema => {
 
   console.log(`🚀 Server ready at http://localhost:4000`)
 })
+
+module.exports = app
