@@ -156,7 +156,7 @@ neoSchema.getSchema().then(async schema => {
   await server.start()
 
   app.use(
-    '/',
+    '/api',
     cors<cors.CorsRequest>(),
     bodyParser.json({ limit: '2mb' }),
     expressMiddleware(server, {
