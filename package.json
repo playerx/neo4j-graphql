@@ -1,8 +1,9 @@
 {
   "scripts": {
-    "start": "nodemon",
+    "start": "node dist/server.js",
+    "dev": "nodemon",
     "tsnode": "ts-node",
-    "etsc": "etsc"
+    "build": "etsc"
   },
   "dependencies": {
     "@apollo/server": "^4.3.0",
