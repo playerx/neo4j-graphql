@@ -156,7 +156,7 @@ neoSchema.getSchema().then(async schema => {
   await server.start()
 
   app.use(
-    '/api',
+    '/',
     cors<cors.CorsRequest>(),
     bodyParser.json({ limit: '2mb' }),
     expressMiddleware(server, {
@@ -168,5 +168,5 @@ neoSchema.getSchema().then(async schema => {
     app.listen({ port: 4000 }, resolve)
   )
 
-  console.log(`🚀 Server ready  at http://localhost:4000`)
+  console.log(`🚀 Server ready at http://localhost:4000`)
 })
