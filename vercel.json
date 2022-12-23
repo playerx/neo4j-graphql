@@ -1,8 +1,8 @@
 {
   "buildCommand": "npm run build",
   "functions": {
-    "src/server.ts": {
-      "includeFiles": "src/**"
+    "server.js": {
+      "includeFiles": "api/**"
     }
   }
 }
